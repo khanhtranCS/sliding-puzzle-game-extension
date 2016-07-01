@@ -1,0 +1,18 @@
+{
+	"manifest_version": 2,
+	"name": "Classic Sliding Puzzle",
+	"description": "Classic Sliding Puzzle that help you kill your time, Let Enjoy!",
+	"version": "1.0",
+	"icons": { "16": "16.png",
+		"48": "48.png",
+		"128": "128.png"
+	},
+	"background": {
+		"script": ["background.js"]
+	},
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_popup": "sliding.html",
+		"default_title": "Classic Sliding Puzzle"
+	}
+}
