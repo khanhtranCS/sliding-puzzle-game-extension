@@ -3,7 +3,7 @@
 // initial white square location
 var empty_x = 300;
 var empty_y = 300;
-
+var TOTAL_SHUFFLE = 1000;
 window.onload = function () {
 	// insert 15 tiles 
 	init_tiles();
@@ -111,6 +111,14 @@ function printCongrate (shuff_bool) {
 }
 
 /*
+ * return the square element with corresponding coordinate
+ */
+ function getTile(x, y) {
+ 	var tile = document.getElementById("square_" + x + "_" + y);
+ 	return tile;
+ }
+
+/*
  * Function that will be use for purpose of remove code redundant for
  * the purpose of click to move and move by shuffle
  */
@@ -139,11 +147,44 @@ function printCongrate (shuff_bool) {
  	applyMove(this, false);
  }
 
+ function getPossibleMove() {
+ 	var lst_moves = [];
+
+ 	var directions = [-100, 100, -100, 100];
+ 	for (var i = 0; i < directions.length; i++) {
+ 		if (i < 2) {
+ 			// left and right move
+ 			// either left or right by 100px based on
+ 			// current empty square x coordinate
+ 			var move = getTile(empty_x + directions[i], empty_y);
+ 		} else {
+ 			// same idea, but for y
+ 			var move = getTile(empty_x, empty_y + directions[i]);
+ 		}
+ 		// check if that square exist, append it into possible move list
+ 		if(move !== null) {
+ 			lst_moves.push(move);
+ 		}
+ 	}
+ 	// return list of moveable move
+ 	return lst_moves;
+ }
+
 // function that will shuffle the tiles
 function shuffle() {
-	console.log("shuffle bclick");
+	// shuffle the board by moving all the tiles one by one in 1000 times,
+	// which is enough for randomization
+	for (var i = 0; i < TOTAL_SHUFFLE; i++ ) {
+		var possible_moves = getPossibleMove();
+		var rand_move = parseInt(Math.random() * possible_moves.length);
+		applyMove(possible_moves[rand_move], true);
+	}
 }
 
+/*
+ * function that will disable hover css properties and will be used 
+ * when mouse hover on non-moveable 
+ */
 function removeHover() {
-	console.log("removeHover is active");
+	var x = parseInt(window.getComputedStyle(this).left)
 }

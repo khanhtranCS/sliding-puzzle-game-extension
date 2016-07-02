@@ -17,3 +17,9 @@ body {
 	border: 5px solid black;
 	position: absolute;
 }
+
+.allTile:hover {
+	border: 5px solid red;
+	color: red;
+	cursor: pointer;
+}
