@@ -10,15 +10,15 @@ var custom_img = 'https://cdn1.iconfinder.com/data/icons/appicns/513/appicns_Chr
 window.onload = function () {
 	// insert 15 tiles 
 	 init_tiles();
-	// if (localStorage.getItem("prevHTML") === null) {
-	// 	init_tiles();
-	// 	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
-	// 	// console.log("got into if: " + localStorage.getItem("prevHTML"));
-	// } else {
-	// 	resetSetting(localStorage.getItem("empty_X"), localStorage.getItem("empty_Y")
-	// 		, localStorage.getItem("prevHTML"));
-	// 	console.log("got into else: " + localStorage.getItem("prevHTML"));
-	// }
+	if (localStorage.getItem("prevHTML") === null) {
+		init_tiles();
+		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
+		// console.log("got into if: " + localStorage.getItem("prevHTML"));
+	} else {
+		resetSetting(localStorage.getItem("empty_X"), localStorage.getItem("empty_Y")
+			, localStorage.getItem("prevHTML"));
+		console.log("got into else: " + localStorage.getItem("prevHTML"));
+	}
 	document.getElementById("shuffle").onclick = shuffle;
 	document.getElementById("reset").onclick = resetGame;
 	document.getElementById("userInput").onchange = changeImg;
@@ -30,7 +30,12 @@ function resetSetting(empty_X, empty_Y, bodyHTML) {
 	var body = document.getElementById("all");
 	body.innerHTML = "";
 	body.innerHTML = bodyHTML;
+	fixMissingFunc();
+}
+// fixing missing tile's functionality after store prev html as html text
+function fixMissingFunc() {
 	var all_tile = document.getElementsByClassName("allTile");
+	var all_removeHov_tile = document.getElementsByClassName("removeHover");
 	// remove through each tile, add functionality for each tile;
 	// such if the tile is click, it'll move, and when a mouse move over
 	// it'll light up if it's movable tile. This functionality is removed, after 
@@ -38,6 +43,10 @@ function resetSetting(empty_X, empty_Y, bodyHTML) {
 	for(var i = 0; i < all_tile.length; i++) {
 		all_tile[i].onclick = moveTile;
 		all_tile[i].onmouseover = removeHover;
+	}
+	for (var i = 0; i < all_removeHov_tile.length; i++) {
+		all_removeHov_tile[i].onclick = moveTile;
+		all_removeHov_tile[i].onmouseover = removeHover;
 	}
 }
 
@@ -86,7 +95,7 @@ function init_tiles() {
 		tile.onclick = moveTile;
 		// if a mouse move over the tiles that is not movable
 		// then remove its however property (change border and text color)
-		tile.onmouseover = removeHover;
+		//tile.onmouseover = removeHover;
 		x_counter++;
 		if (x_counter == 4) {
 			x_counter = 0;
@@ -187,6 +196,7 @@ function printCongrat (shuff_bool) {
  		tile.id = "square_" + empty_x + "_" + empty_y;
  		empty_x = x;
  		empty_y = y;
+ 		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
  		// after move being applied; call this function to determine
  		// whether or not the game has been successfully completed
  		printCongrat(shuff_bool);
@@ -234,7 +244,6 @@ function shuffle() {
 		var rand_move = parseInt(Math.random() * possible_moves.length);
 		applyMove(possible_moves[rand_move], true);
 	}
-	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
 }
 
 /*
