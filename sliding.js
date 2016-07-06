@@ -9,7 +9,7 @@ var TOTAL_SHUFFLE = 1000;
 var custom_img = 'https://cdn1.iconfinder.com/data/icons/appicns/513/appicns_Chrome.png';
 window.onload = function () {
 	// insert 15 tiles 
-	init_tiles();
+	 init_tiles();
 	// if (localStorage.getItem("prevHTML") === null) {
 	// 	init_tiles();
 	// 	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
@@ -20,6 +20,7 @@ window.onload = function () {
 	// 	console.log("got into else: " + localStorage.getItem("prevHTML"));
 	// }
 	document.getElementById("shuffle").onclick = shuffle;
+	document.getElementById("reset").onclick = resetGame;
 	document.getElementById("userInput").onchange = changeImg;
 }
 
@@ -29,6 +30,15 @@ function resetSetting(empty_X, empty_Y, bodyHTML) {
 	var body = document.getElementById("all");
 	body.innerHTML = "";
 	body.innerHTML = bodyHTML;
+	var all_tile = document.getElementsByClassName("allTile");
+	// remove through each tile, add functionality for each tile;
+	// such if the tile is click, it'll move, and when a mouse move over
+	// it'll light up if it's movable tile. This functionality is removed, after 
+	// adding save previous setting for popup menu
+	for(var i = 0; i < all_tile.length; i++) {
+		all_tile[i].onclick = moveTile;
+		all_tile[i].onmouseover = removeHover;
+	}
 }
 
 function saveSetting(empty_x, empty_y, bodyHTML) {
@@ -40,6 +50,10 @@ function saveSetting(empty_x, empty_y, bodyHTML) {
 function changeImg() {
 	console.log("change Imge been called");
 	custom_img = this.value;
+	resetGame
+}
+
+function resetGame() {
 	init_tiles();
 	empty_x = 300;
 	empty_y = 300;
