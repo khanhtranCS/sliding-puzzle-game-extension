@@ -50,7 +50,7 @@ function saveSetting(empty_x, empty_y, bodyHTML) {
 function changeImg() {
 	console.log("change Imge been called");
 	custom_img = this.value;
-	resetGame
+	resetGame();
 }
 
 function resetGame() {
