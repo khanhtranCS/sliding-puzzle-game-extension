@@ -3,18 +3,56 @@
 // initial white square location
 var empty_x = 300;
 var empty_y = 300;
+// amount of shuffle times
 var TOTAL_SHUFFLE = 1000;
+// custom image link
+var custom_img = 'https://cdn1.iconfinder.com/data/icons/appicns/513/appicns_Chrome.png';
 window.onload = function () {
 	// insert 15 tiles 
 	init_tiles();
+	// if (localStorage.getItem("prevHTML") === null) {
+	// 	init_tiles();
+	// 	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
+	// 	// console.log("got into if: " + localStorage.getItem("prevHTML"));
+	// } else {
+	// 	resetSetting(localStorage.getItem("empty_X"), localStorage.getItem("empty_Y")
+	// 		, localStorage.getItem("prevHTML"));
+	// 	console.log("got into else: " + localStorage.getItem("prevHTML"));
+	// }
 	document.getElementById("shuffle").onclick = shuffle;
+	document.getElementById("userInput").onchange = changeImg;
 }
+
+function resetSetting(empty_X, empty_Y, bodyHTML) {
+	empty_x = empty_X;
+	empty_y = empty_Y;
+	var body = document.getElementById("all");
+	body.innerHTML = "";
+	body.innerHTML = bodyHTML;
+}
+
+function saveSetting(empty_x, empty_y, bodyHTML) {
+	localStorage.setItem("prevHTML", bodyHTML);
+	localStorage.setItem("empty_X", empty_x);
+	localStorage.setItem("empty_Y", empty_y);
+}
+
+function changeImg() {
+	console.log("change Imge been called");
+	custom_img = this.value;
+	init_tiles();
+	empty_x = 300;
+	empty_y = 300;
+	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
+}
+
 // initialize 15 puzzle squares
 function init_tiles() {
 	var coords = [0, -100, -200, -300];
 	var x_counter = 0;
 	var y_counter = 0;
 	var puzzle_area = document.getElementById("puzzlearea");
+	puzzlearea.innerHTML = "";
 	var tiles_length = 15;
 	// loop to create 15 tiles
 	for (var i = 1; i <= tiles_length; i++) {
@@ -24,7 +62,8 @@ function init_tiles() {
 		// Since, each tile will have will contain full image; however,
 		// it only contain 100x100 part of the whole image size of 400x400
 		// so the image will be arrange respectively
-		tile.style.backgroundImage = "url('background.jpg')";
+		tile.style.backgroundImage = "url('" + custom_img + "')";
+		tile.style.backgroundSize = "400px 400px";
 		tile.style.backgroundPosition = coords[x_counter] + "px" + " " +coords[y_counter] + "px";
 		tile.style.left = left_x + "px";
 		tile.style.top = top_y + "px";
@@ -40,7 +79,7 @@ function init_tiles() {
 			y_counter++;
 		}
 		// add inner text for the tile
-		tile.innerHTML = "" + i;
+		// tile.innerHTML = "" + i;
 		tile.className = "allTile"
 
 		// insert tile into puzzle area
@@ -63,7 +102,7 @@ function isMoveable(x, y) {
 }
 
 // function that will determine if the board have been solved or not
-function solvedHuh () {
+function solvedHuh() {
 	// 
 	var lst_square = document.getElementById("puzzlearea").getElementsByTagName("div");
 	var x = 0;
@@ -94,7 +133,7 @@ function solvedHuh () {
 /*
  * Print congratulation message when the board is in solved stat
  */
-function printCongrate (shuff_bool) {
+function printCongrat (shuff_bool) {
 	var output = document.getElementById("output");
 	// if the board is in solved state and
 	// the move is not made by shuffle button
@@ -102,7 +141,7 @@ function printCongrate (shuff_bool) {
 		var congrate_mess = document.createElement("div");
 		congrate_mess.id = "congrat_mess";
 		congrate_mess.innerHTML = "Congratulation! You won!!";
-		output.appendChild(congrat_mess);
+		output.appendChild(congrate_mess);
 	} else if (output.hasChildNodes()) {
 		// remove the message when the board is not in solved stat
 		var child = output.firstChild;
@@ -136,8 +175,9 @@ function printCongrate (shuff_bool) {
  		empty_y = y;
  		// after move being applied; call this function to determine
  		// whether or not the game has been successfully completed
- 		printCongrate(shuff_bool);
+ 		printCongrat(shuff_bool);
  	}
+
  }
 
 /*
@@ -145,6 +185,7 @@ function printCongrate (shuff_bool) {
  */
  function moveTile() {
  	applyMove(this, false);
+ 	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
  }
 
  function getPossibleMove() {
@@ -179,12 +220,43 @@ function shuffle() {
 		var rand_move = parseInt(Math.random() * possible_moves.length);
 		applyMove(possible_moves[rand_move], true);
 	}
+	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
 }
+
+/*
+ * print congratulation message
+ * if shuff_bool is true, the move is made by shuffle button, it shouldn't produce
+ * congratulation along the way of shuffle; else otherwise
+ */
+ function printCongrat(shuff_bool) {
+ 	var output = document.getElementById("output");
+ 	// if the board is in solved stat and
+ 	// the move is not made by shuffle
+ 	if (solvedHuh() && !shuff_bool) {
+ 		var congrat_mess = document.createElement("div");
+ 		congrat_mess.id = "congrat_mess";
+ 		congrat_mess.innerHTML = "Congratulation! You won!!";
+ 		output.appendChild(congrat_mess);
+ 	} else if (output.hasChildNodes()) {
+ 		// remove the message when the board is not in
+ 		// solved stat
+ 		var child = output.firstChild;
+ 		output.removeChild(child);
+ 	}
+ }
 
 /*
  * function that will disable hover css properties and will be used 
  * when mouse hover on non-moveable 
  */
 function removeHover() {
-	var x = parseInt(window.getComputedStyle(this).left)
+	var x = parseInt(window.getComputedStyle(this).left);
+	var y = parseInt(window.getComputedStyle(this).top);
+	if (isMoveable(x,y)) {
+		this.className = "allTile";
+		return;
+	}
+	// if it's not moveable; then it have its original state without hover
+	// properties
+	this.className = "removeHover";
 }
