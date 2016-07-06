@@ -95,7 +95,7 @@ function init_tiles() {
 		tile.onclick = moveTile;
 		// if a mouse move over the tiles that is not movable
 		// then remove its however property (change border and text color)
-		//tile.onmouseover = removeHover;
+		tile.onmouseover = removeHover;
 		x_counter++;
 		if (x_counter == 4) {
 			x_counter = 0;
