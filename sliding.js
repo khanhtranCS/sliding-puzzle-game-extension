@@ -12,11 +12,11 @@ window.onload = function () {
 	//init_tiles();
 	if (localStorage.getItem("prevHTML") === null) {
 		init_tiles();
-		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML, custom_img);
+		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
 		// console.log("got into if: " + localStorage.getItem("prevHTML"));
 	} else {
 		resetSetting(localStorage.getItem("empty_X"), localStorage.getItem("empty_Y")
-			, localStorage.getItem("prevHTML"), localStorage.getItem("img_url"));
+			, localStorage.getItem("prevHTML"));
 		//console.log("got into else: " + localStorage.getItem("prevHTML"));
 	}
 	document.getElementById("shuffle").onclick = shuffle;
@@ -24,7 +24,7 @@ window.onload = function () {
 	document.getElementById("userInput").onchange = changeImg;
 }
 
-function resetSetting(empty_X, empty_Y, bodyHTML, custom_img) {
+function resetSetting(empty_X, empty_Y, bodyHTML) {
 	empty_x = empty_X;
 	empty_y = empty_Y;
 	var body = document.getElementById("all");
@@ -55,20 +55,25 @@ function saveSetting(empty_x, empty_y, bodyHTML, custom_img) {
 	localStorage.setItem("prevHTML", bodyHTML);
 	localStorage.setItem("empty_X", empty_x);
 	localStorage.setItem("empty_Y", empty_y);
-	localStorage.setItem("img_url", custom_img)
+	// localStorage.setItem("img_url", custom_img);
 }
 
 function changeImg() {
 	console.log(this.value);
 	custom_img = this.value;
+	// save the image link after every image change
+	localStorage.setItem("img_url", custom_img);
 	resetGame();
 }
 
 function resetGame() {
+	custom_img = localStorage.getItem("img_url");
 	init_tiles();
+	// after we initialize the tile with new custom_img, we have to save the new html, so that
+	// after every reset, it'll get newly img url instead of previously used url
+	localStorage.setItem("prevHTML", document.getElementById("all").innerHTML);
 	empty_x = 300;
 	empty_y = 300;
-	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
 }
 
 // initialize 15 puzzle squares
@@ -217,7 +222,7 @@ function printCongrat (shuff_bool) {
  	var lst_moves = [];
 
  	var directions = [-100, 100, -100, 100];
- 	console.log("direction's length" + directions.length);
+ 	// console.log("direction's length" + directions.length);
  	for (var i = 0; i < directions.length; i++) {
  		if (i < 2) {
  			// left and right move
@@ -244,7 +249,7 @@ function shuffle() {
 	// which is enough for randomization
 	for (var i = 0; i < TOTAL_SHUFFLE; i++ ) {
 		var possible_moves = getPossibleMove();
-		console.log(possible_moves);
+		//console.log(possible_moves);
 		var rand_move = parseInt(Math.random() * possible_moves.length);
 		applyMove(possible_moves[rand_move], true);
 	}
