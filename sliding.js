@@ -9,27 +9,28 @@ var TOTAL_SHUFFLE = 1000;
 var custom_img = 'https://cdn1.iconfinder.com/data/icons/appicns/513/appicns_Chrome.png';
 window.onload = function () {
 	// insert 15 tiles 
-	 init_tiles();
+	//init_tiles();
 	if (localStorage.getItem("prevHTML") === null) {
 		init_tiles();
-		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
+		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML, custom_img);
 		// console.log("got into if: " + localStorage.getItem("prevHTML"));
 	} else {
 		resetSetting(localStorage.getItem("empty_X"), localStorage.getItem("empty_Y")
-			, localStorage.getItem("prevHTML"));
-		console.log("got into else: " + localStorage.getItem("prevHTML"));
+			, localStorage.getItem("prevHTML"), localStorage.getItem("img_url"));
+		//console.log("got into else: " + localStorage.getItem("prevHTML"));
 	}
 	document.getElementById("shuffle").onclick = shuffle;
 	document.getElementById("reset").onclick = resetGame;
 	document.getElementById("userInput").onchange = changeImg;
 }
 
-function resetSetting(empty_X, empty_Y, bodyHTML) {
+function resetSetting(empty_X, empty_Y, bodyHTML, custom_img) {
 	empty_x = empty_X;
 	empty_y = empty_Y;
 	var body = document.getElementById("all");
 	body.innerHTML = "";
 	body.innerHTML = bodyHTML;
+
 	fixMissingFunc();
 }
 // fixing missing tile's functionality after store prev html as html text
@@ -50,14 +51,15 @@ function fixMissingFunc() {
 	}
 }
 
-function saveSetting(empty_x, empty_y, bodyHTML) {
+function saveSetting(empty_x, empty_y, bodyHTML, custom_img) {
 	localStorage.setItem("prevHTML", bodyHTML);
 	localStorage.setItem("empty_X", empty_x);
 	localStorage.setItem("empty_Y", empty_y);
+	localStorage.setItem("img_url", custom_img)
 }
 
 function changeImg() {
-	console.log("change Imge been called");
+	console.log(this.value);
 	custom_img = this.value;
 	resetGame();
 }
@@ -196,7 +198,6 @@ function printCongrat (shuff_bool) {
  		tile.id = "square_" + empty_x + "_" + empty_y;
  		empty_x = x;
  		empty_y = y;
- 		saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
  		// after move being applied; call this function to determine
  		// whether or not the game has been successfully completed
  		printCongrat(shuff_bool);
@@ -216,15 +217,17 @@ function printCongrat (shuff_bool) {
  	var lst_moves = [];
 
  	var directions = [-100, 100, -100, 100];
+ 	console.log("direction's length" + directions.length);
  	for (var i = 0; i < directions.length; i++) {
  		if (i < 2) {
  			// left and right move
  			// either left or right by 100px based on
  			// current empty square x coordinate
- 			var move = getTile(empty_x + directions[i], empty_y);
+ 			// convert empty_x to Int because it change to string after using localstorage
+ 			var move = getTile(parseInt(empty_x) + directions[i], empty_y);
  		} else {
  			// same idea, but for y
- 			var move = getTile(empty_x, empty_y + directions[i]);
+ 			var move = getTile(parseInt(empty_x), empty_y + directions[i]);
  		}
  		// check if that square exist, append it into possible move list
  		if(move !== null) {
@@ -241,9 +244,11 @@ function shuffle() {
 	// which is enough for randomization
 	for (var i = 0; i < TOTAL_SHUFFLE; i++ ) {
 		var possible_moves = getPossibleMove();
+		console.log(possible_moves);
 		var rand_move = parseInt(Math.random() * possible_moves.length);
 		applyMove(possible_moves[rand_move], true);
 	}
+	saveSetting(empty_x, empty_y, document.getElementById("all").innerHTML);
 }
 
 /*
